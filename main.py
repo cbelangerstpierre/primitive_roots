@@ -57,10 +57,31 @@ def primesfrom2to(n):
     return numpy.r_[2, 3, ((3 * numpy.nonzero(sieve)[0][1:] + 1) | 1)]
 
 
+start = timeit.default_timer()
+for q in list(map(int, primesfrom2to(2000))):
+    q_minus1 = q - 1
+    generators = list()
+    for a in range(1, q):
+        if math.isqrt(a) ** 2 == a:
+            continue
+        tests = list(map(lambda x: int(q_minus1 / x), sympy.primefactors(q_minus1)))
+        is_valid = True
+        for test in tests:
+            if pow(a, test, q) == 1:
+                is_valid = False
+                break
+        if is_valid:
+            generators.append(a)
+    if len(generators) != 0:
+        print(q, "->", generators)
+print("Time :", timeit.default_timer() - start)
+
+
 # start = timeit.default_timer()
 # for q in list(map(int, primesfrom2to(2000))):
 #     q_minus1 = q - 1
 #     generators = list()
+#     first_a = 0
 #     for a in range(1, q):
 #         if math.isqrt(a) ** 2 == a:
 #             continue
@@ -71,16 +92,23 @@ def primesfrom2to(n):
 #                 is_valid = False
 #                 break
 #         if is_valid:
-#             generators.append(a)
-#     if len(generators) != 0:
-#         print(q, "->", generators)
+#             first_a = a
+#             break
+#     for m in range(1, q):
+#         if sympy.gcd(m, q - 1) == 1:
+#             generators.append(pow(first_a, m, q))
+#     generators.sort()
+#     print(q, "->", generators)
 # print("Time :", timeit.default_timer() - start)
 
+
+
 # print(sympy.gcd(46, 84))
-q = 761
-generators = list()
-for m in range(1, q):
-    if sympy.gcd(m, q-1) == 1:
-        generators.append(pow(6, m, q - 1))
-generators.sort()
-print(generators)
+# q = 29
+# generators = list()
+# for m in range(1, q):
+#     if sympy.gcd(m, q-1) == 1:
+#         generators.append(pow(2, m, q))
+# generators.sort()
+# print(generators)
+
