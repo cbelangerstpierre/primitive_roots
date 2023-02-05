@@ -1,18 +1,21 @@
 import math
 import timeit
-
 import numpy
 import sympy
 
 
 def onlyTest(mod):
-    return [a for a in range(1, mod) if math.isqrt(a) ** 2 != a and all(pow(a, test, mod) != 1 for test in list(map(lambda x: (mod - 1) // x, sympy.primefactors(mod - 1))))]
+    mod_minus1 = mod - 1
+    tests = list(map(lambda x: mod_minus1 // x, sympy.primefactors(mod_minus1)))
+    return [a for a in range(1, mod) if math.isqrt(a) ** 2 != a and all(pow(a, test, mod) != 1 for test in tests)]
 
 
 def testAndMGenerate(mod):
+    mod_minus1 = mod - 1
     for a in range(1, mod):
-        if math.isqrt(a) ** 2 != a and all(pow(a, test, mod) != 1 for test in list(map(lambda x: (mod - 1) // x, sympy.primefactors(mod - 1)))):
-            return sorted([pow(a, m, mod) for m in range(1, mod) if math.gcd(m, mod - 1) == 1])
+        tests = list(map(lambda x: mod_minus1 // x, sympy.primefactors(mod_minus1)))
+        if math.isqrt(a) ** 2 != a and all(pow(a, test, mod) != 1 for test in tests):
+            return sorted([pow(a, m, mod) for m in range(1, mod) if math.gcd(m, mod_minus1) == 1])
 
 
 def primesfrom2to(n):
@@ -25,14 +28,13 @@ def primesfrom2to(n):
     return numpy.r_[2, 3, ((3 * numpy.nonzero(sieve)[0][1:] + 1) | 1)]
 
 
-start = timeit.default_timer()
-for q in list(map(int, primesfrom2to(200))):
-    result = onlyTest(q)
-    print(q, "->", result)
-print("Time :", timeit.default_timer() - start)
+def test_function(function):
+    start = timeit.default_timer()
+    for q in list(map(int, primesfrom2to(20000))):
+        result = function(q)
+        # print(q, "->", result)
+    print("Time :", timeit.default_timer() - start)
 
-start = timeit.default_timer()
-for q in list(map(int, primesfrom2to(200))):
-    result = testAndMGenerate(q)
-    print(q, "->", result)
-print("Time :", timeit.default_timer() - start)
+
+test_function(onlyTest)
+test_function(testAndMGenerate)
