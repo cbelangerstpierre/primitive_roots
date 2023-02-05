@@ -12,8 +12,8 @@ def onlyTest(mod):
 
 def testAndMGenerate(mod):
     mod_minus1 = mod - 1
+    tests = list(map(lambda x: mod_minus1 // x, sympy.primefactors(mod_minus1)))
     for a in range(1, mod):
-        tests = list(map(lambda x: mod_minus1 // x, sympy.primefactors(mod_minus1)))
         if math.isqrt(a) ** 2 != a and all(pow(a, test, mod) != 1 for test in tests):
             return sorted([pow(a, m, mod) for m in range(1, mod) if math.gcd(m, mod_minus1) == 1])
 
